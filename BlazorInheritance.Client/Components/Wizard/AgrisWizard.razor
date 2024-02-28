@@ -1,0 +1,113 @@
+﻿@implements IDisposable
+<h3>AgrisWizard</h3>
+
+<h2>Steps:</h2>
+
+@if (this.IsLoading)
+{
+	<span>Loading...</span>
+}
+
+<SectionOutlet SectionId="AgrisWizard.Content" />
+
+<div style="background-color:beige">
+	<SectionOutlet SectionId="AgrisWizard.Buttons" />
+	@if (this.CurrentStep != 0)
+	{
+		<button @onclick="onPreviousButtonClicked">Zurück</button>
+	}
+	<button @onclick="onNextButtonClicked">Weiter</button>
+</div>
+
+
+@code {
+	public static AgrisWizard Wizard { get; set; }
+	public static object Content = new object();
+	public static object Buttons = new object();
+
+	protected int CurrentStep { get; set; } = 0;
+	protected bool IsLoading { get; set; } = false;
+
+	private List<AgrisWizardStep> steps = new List<AgrisWizardStep>();
+	private string visibility => this.IsLoading ? "hidden" : "visible";
+
+	protected override void OnInitialized()
+	{
+		steps.Clear();
+		Wizard = this;
+	}
+
+	void IDisposable.Dispose()
+	{
+		steps.Clear();
+	}
+
+	protected virtual async Task OnNextStep(int step)
+	{
+		await this.setStepActive(step);
+	}
+
+	protected virtual async Task OnPreviousStep(int step)
+	{
+		await this.setStepActive(step);
+	}
+
+	protected virtual async Task OnRestart()
+	{
+		await this.setStepActive(0);
+	}
+
+	public async Task RegisterStep(AgrisWizardStep step)
+	{
+		step.StepNr = steps.Count;
+		steps.Add(step);
+
+		if (steps.Count == 1)
+		{
+			await this.setStepActive(0);
+		}
+	}
+
+	private async Task onNextButtonClicked()
+	{
+		int targetStep = CurrentStep + 1 >= steps.Count ? 0 : CurrentStep + 1;
+
+		if (steps[CurrentStep].IsStepValid())
+		{
+			if (targetStep == 0)
+			{
+				await OnRestart();
+			}
+			else
+			{
+				await OnNextStep(targetStep);
+			}
+		}
+	}
+
+	private async Task onPreviousButtonClicked()
+	{
+		int targetStep = Math.Max(CurrentStep - 1, 0);
+		await OnPreviousStep(targetStep);
+	}
+
+	private async Task setStepActive(int step)
+	{
+		if (CurrentStep != step)
+		{
+			steps[CurrentStep].IsActive = false;
+			this.IsLoading = true;
+			await steps[CurrentStep].OnBeforeStepChanged();
+			this.IsLoading = false;
+
+		}
+
+		this.CurrentStep = step;
+
+		steps[CurrentStep].OnStepInit();
+		steps[CurrentStep].IsActive = true;
+	}
+
+
+	public static object Steps = new object();
+}

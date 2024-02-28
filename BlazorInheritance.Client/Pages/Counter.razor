@@ -1,0 +1,30 @@
+﻿@page "/counter"
+@using BlazorInheritance.Client.Components
+@using BlazorInheritance.Client.Components.Wizard
+@rendermode InteractiveWebAssembly
+@inherits AgrisWizard
+@((RenderFragment)base.BuildRenderTree)
+
+
+<SectionContent SectionId="AgrisWizard.Content">
+	<ShowCounterStep></ShowCounterStep>
+	<ShowSomethingElseStep ></ShowSomethingElseStep>
+	
+</SectionContent>
+@* <CascadingValue Name="Wizzaard" Value="(AgrisWizard)this">
+	<ShowCounterStep></ShowCounterStep>
+</CascadingValue> *@
+
+
+@code {
+
+	private int currentCount = 0;
+
+
+	private void IncrementCount()
+	{
+		currentCount++;
+	}
+
+
+}

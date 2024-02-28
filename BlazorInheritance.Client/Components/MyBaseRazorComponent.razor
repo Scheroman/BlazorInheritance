@@ -1,0 +1,25 @@
+﻿@using Microsoft.AspNetCore.Components.Sections
+@inherits MyBaseComponent
+
+
+Counter: @Counter
+@if (IsVisible)
+{
+	<SectionOutlet SectionId="Content" />
+}
+
+<button @onclick="OnNextClicked">Next</button>
+
+
+@code{
+
+	protected bool IsVisible = true;
+
+	private void OnNextClicked(){
+		if (IsValid())
+		{
+			OnNextStep();
+		}
+	}
+
+}

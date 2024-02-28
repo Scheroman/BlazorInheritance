@@ -1,0 +1,50 @@
+﻿@if (this.IsActive)
+{
+	<div style="background-color:aquamarine">
+		<SectionOutlet SectionId="Content"></SectionOutlet>
+	</div>
+}
+
+@code {
+
+	protected object Content = new object();
+
+	public int StepNr { get; set; }
+
+	public bool IsActive { 
+		get
+		{
+			return isActive;
+		}
+		set
+		{
+			isActive = value;
+			StateHasChanged();
+		}
+	}
+
+	private bool isActive;
+
+	protected override void OnInitialized()
+	{
+		if (AgrisWizard.Wizard != null)
+		{
+			AgrisWizard.Wizard.RegisterStep(this);
+		}
+	}
+
+	public virtual bool IsStepValid()
+	{
+		return true;
+	}
+
+	public virtual void OnStepInit()
+	{
+
+	}
+
+	public virtual async Task OnBeforeStepChanged()
+	{
+		
+	}
+}
