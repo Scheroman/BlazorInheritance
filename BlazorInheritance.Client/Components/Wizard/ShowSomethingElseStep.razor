@@ -1,11 +1,25 @@
-﻿@inherits AgrisWizardStep
+﻿@using static BlazorInheritance.Client.Components.Wizard.ShowCounterStep
+@inherits AgrisWizardStep
 @((RenderFragment)base.BuildRenderTree)
 
 <SectionContent SectionId="Content">
 	<h3>Hello World</h3>
+	Counter was: @CounterObj.Counter <br />
+	Message from last Step: @CounterObj.SomeMessage <br/>
+
+	@foreach(DummyObject obj in DummyObjects)
+	{
+		@obj.JustAMesage <br/>
+	}
 </SectionContent>
 
 @code {
+	[StepParameter]
+	public SomeDataObject CounterObj { get; set; }
+
+	[StepParameter]
+	public List<DummyObject> DummyObjects { get; set; } = new List<DummyObject>();
+
 	public override async Task OnBeforeStepChanged()
 	{
 		await base.OnBeforeStepChanged();
@@ -14,6 +28,6 @@
 
 	private async Task saveSomething()
 	{
-		await Task.Delay(2000);
+		// await Task.Delay(2000);
 	}
 }

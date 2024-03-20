@@ -1,27 +1,55 @@
-﻿@inherits AgrisWizardStep
+﻿@using System.Reflection
+@inherits AgrisWizardStep
 @((RenderFragment)base.BuildRenderTree)
 
-<SectionContent SectionId="Content" >
+<SectionContent SectionId="Content">
 	<h3>ShowCounterStep</h3>
-	<h4>Counter: @counter</h4>
-	<button @onclick="()=>counter++">Increment</button>
+	<h4>Counter: @CounterObj.Counter</h4>
+	<button @onclick="increment">Increment</button>
+	<SectionContent SectionId="AgrisWizard.Buttons"><button @onclick="()=>CounterObj.Counter=0">ResetCounter</button></SectionContent>
 </SectionContent>
 
-<SectionContent SectionId="AgrisWizard.Buttons"><button @onclick="()=>counter=0">ResetCounter</button></SectionContent>
 
 @code {
 
-	private int counter = 0;
+	public class SomeDataObject
+	{
+		public string SomeMessage { get; set; }
+		public int Counter { get; set; }
+	}
+
+	public class DummyObject
+	{
+		public string JustAMesage { get; set; }
+		public DummyObject(string msg)
+		{
+			this.JustAMesage = msg;
+		}
+	}
+
+	[StepParameter]
+	public SomeDataObject CounterObj { get; set; } = new SomeDataObject();
+
+	[StepParameter]
+	public List<DummyObject> DummyObjects { get; set; } = new List<DummyObject>();
 
 
 	public override void OnStepInit()
 	{
 		base.OnStepInit();
-		counter = 0;
+		CounterObj.SomeMessage = "Hello From ShowCounterStep";
 	}
 
 	public override bool IsStepValid()
 	{
-		return counter > 4;
+		return CounterObj.Counter > 4;
 	}
+
+	private void increment()
+	{
+		CounterObj.Counter++;
+		DummyObjects.Add(new DummyObject("Hello"));
+	}
+
+
 }

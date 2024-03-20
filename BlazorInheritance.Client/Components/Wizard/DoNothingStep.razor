@@ -1,0 +1,48 @@
+﻿@using static BlazorInheritance.Client.Components.BarcodeScanner
+@using static BlazorInheritance.Client.Components.Wizard.ShowCounterStep
+@inherits AgrisWizardStep
+@((RenderFragment)base.BuildRenderTree)
+
+<SectionContent SectionId="Content">
+	Counter was: @CounterObj.Counter <br />
+	Message from last Step: @CounterObj.SomeMessage
+
+	<BarcodeScanner OnBarcodeScanned="checkBarcode"></BarcodeScanner>
+	Barcodetype: @this.barcodeType
+
+	<SectionContent SectionId="AgrisWizard.Buttons">
+		<BarcodeButton />
+	</SectionContent>
+	
+</SectionContent>
+
+@code {
+	[StepParameter]
+	public SomeDataObject CounterObj { get; set; }
+
+	[StepParameter]
+	public List<DummyObject> DummyObjects { get; set; } = new List<DummyObject>();
+
+	private string barcodeType = "";
+
+	public override void OnStepInit()
+	{
+		base.OnStepInit();
+	}
+
+	public override async Task OnBeforeStepChanged()
+	{
+		CounterObj.SomeMessage = "Hello From DoNothingStep";
+	}
+
+	private void checkBarcode(Barcode barcode)
+	{
+		if (barcode.IsOfType(BarcodeConstants.GFBarcode))
+		{
+			barcodeType = "GF Barcode";
+		} else if (barcode.IsOfType(BarcodeConstants.AuftragBarcode))
+		{
+			barcodeType = "Auftrag Barcode";
+		}
+	}
+}

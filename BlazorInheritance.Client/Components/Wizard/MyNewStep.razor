@@ -1,0 +1,14 @@
+﻿@using BlazorInheritance.Client.Components.Wizard
+@inherits AgrisWizardStep
+@((RenderFragment)base.BuildRenderTree)
+
+<SectionContent SectionId="Content">
+	@*UI Elements go here*@
+</SectionContent>
+
+@code{
+	public override void OnStepInit(){
+		base.OnStepInit();
+		@*Use this as OnInitialized*@
+	}
+}

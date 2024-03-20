@@ -1,0 +1,85 @@
+﻿<h3>Please Scan</h3>
+
+<button @onclick="onBarcodeScanned">Scan</button>
+
+<SectionContent SectionId="BarcodeButton.Content">
+	<button style="@this.style" @onclick="onScanButtonClicked">@(isAktiv ? "Scan deaktivieren" : "Scan aktivieren")</button>
+</SectionContent>
+
+@code {
+
+	public class BarcodeConstants
+	{
+		public const string GFBarcode = "gf";
+		public const string AuftragBarcode = "au";
+	}
+
+	public class Barcode
+	{
+		public string Prefix;
+		public string Payload;
+
+		public Barcode(string barcode)
+		{
+			if (barcode.StartsWith("^") && barcode.EndsWith("$"))
+			{
+				barcode = barcode.Substring(1, barcode.Length - 2);
+			} else
+			{
+				return;
+			}
+
+			var properties = typeof(BarcodeConstants).GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.FlattenHierarchy);
+
+			foreach(var property in properties)
+			{
+				string prefix = (string)property.GetRawConstantValue();
+				if(barcode.StartsWith(prefix))
+				{
+					barcode = barcode.Substring(prefix.Count(), barcode.Length - prefix.Count());
+					Prefix = prefix;
+					Payload = barcode;
+					return;
+				}
+			}
+
+			Payload = barcode;
+		}
+
+		public bool IsOfType(string barcodeConstant)
+		{
+			return barcodeConstant.Equals(Prefix);
+		}
+	}
+
+	private string disabledStyle = "background-color: dodgerblue; color: floralwhite";
+	private string enabledStyle = "background-color: red; color: floralwhite";
+	private string style => isAktiv ? enabledStyle : disabledStyle;
+	private bool isAktiv = true;
+
+	[Parameter]
+	public EventCallback<Barcode> OnBarcodeScanned { get; set; }
+
+
+	private void onScanButtonClicked()
+	{
+		this.isAktiv = !this.isAktiv;
+		StateHasChanged();
+	}
+
+	private void onBarcodeScanned()
+	{
+		string testBarcode = "^gftest123$";
+		Barcode barcode = new Barcode(testBarcode);
+
+		if (!string.IsNullOrEmpty(barcode.Payload))
+		{
+			OnBarcodeScanned.InvokeAsync(barcode);
+		}
+	}
+
+	public void DoSomething()
+	{
+		
+	}
+}

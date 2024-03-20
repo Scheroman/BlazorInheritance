@@ -1,22 +1,26 @@
 ﻿@page "/counter"
 @using BlazorInheritance.Client.Components
 @using BlazorInheritance.Client.Components.Wizard
+@using static BlazorInheritance.Client.Components.Wizard.ShowCounterStep
 @rendermode InteractiveWebAssembly
 @inherits AgrisWizard
 @((RenderFragment)base.BuildRenderTree)
 
 
+
 <SectionContent SectionId="AgrisWizard.Content">
 	<ShowCounterStep></ShowCounterStep>
+	<DoNothingStep></DoNothingStep>
 	<ShowSomethingElseStep ></ShowSomethingElseStep>
-	
 </SectionContent>
-@* <CascadingValue Name="Wizzaard" Value="(AgrisWizard)this">
-	<ShowCounterStep></ShowCounterStep>
-</CascadingValue> *@
+
+
+Last updated Counter was: @CounterObj.Counter
 
 
 @code {
+	[StepParameter]
+	public SomeDataObject CounterObj { get; set; } = new SomeDataObject();
 
 	private int currentCount = 0;
 
@@ -24,6 +28,11 @@
 	private void IncrementCount()
 	{
 		currentCount++;
+	}
+	protected override Task OnNextStep(int step)
+	{
+
+		return base.OnNextStep(step);
 	}
 
 

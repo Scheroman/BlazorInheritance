@@ -1,4 +1,5 @@
 ﻿@implements IDisposable
+
 <h3>AgrisWizard</h3>
 
 <h2>Steps:</h2>
@@ -100,6 +101,16 @@
 			await steps[CurrentStep].OnBeforeStepChanged();
 			this.IsLoading = false;
 
+		}
+
+		if (CurrentStep >= 0 && CurrentStep < steps.Count && step >= 0 && step < steps.Count && CurrentStep != step)
+		{
+			for (int i = CurrentStep + 1; i < steps.Count; i++)
+			{
+				StepParameter.PassParameters(steps[CurrentStep], steps[i]);
+			}
+
+			StepParameter.PassParameters(steps[CurrentStep], this);
 		}
 
 		this.CurrentStep = step;
