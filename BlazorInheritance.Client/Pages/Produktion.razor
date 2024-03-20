@@ -1,0 +1,14 @@
+﻿@page "/produktion"
+@rendermode InteractiveWebAssembly
+@using BlazorInheritance.Client.Components.MultiPage
+@inherits AgrisBaseMultiPage
+@((RenderFragment)base.BuildRenderTree)
+
+<AuftraegeAnsicht />
+<AuftragAnsicht />
+<SettingsAnsicht />
+<SomeOtherAnsicht />
+
+@code {
+
+}

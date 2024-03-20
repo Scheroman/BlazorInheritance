@@ -1,0 +1,14 @@
+﻿@inherits AgrisBasePage
+@((RenderFragment)base.BuildRenderTree)
+
+<SectionContent SectionId="this.Content">
+    <h3>Settings ansicht</h3>
+    <br />
+    Some Setting <input type="checkbox" />
+
+    <button @onclick="GoToPage<SomeOtherAnsicht>">Some Other Ansicht</button>
+</SectionContent>
+
+@code {
+
+}

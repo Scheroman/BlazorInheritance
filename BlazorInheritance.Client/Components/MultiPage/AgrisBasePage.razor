@@ -1,0 +1,25 @@
+﻿
+
+@code {
+    public object Content = new object();
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        if (AgrisBaseMultiPage.MultiPage != null)
+        {
+            AgrisBaseMultiPage.MultiPage.RegisterPage(this);
+        }
+    }
+
+    // protected void GoToPage(Type pageType)
+    // {
+    //     AgrisBaseMultiPage.MultiPage.GoToPage(pageType);    
+    // }
+
+    protected void GoToPage<T>()
+    {
+        AgrisBaseMultiPage.MultiPage.GoToPage(typeof(T));
+    }
+}

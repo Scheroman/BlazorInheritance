@@ -1,0 +1,45 @@
+﻿@using BlazorInheritance.Client.Components.Wizard
+@inherits AgrisBasePage
+
+@((RenderFragment)base.BuildRenderTree)
+
+<SectionContent SectionId="this.Content">
+    <h3>Auftraege</h3>
+
+    @foreach(Auftrag auftrag in auftraege)
+    {
+        <button @onclick="() => this.selectAuftrag(auftrag)">@auftrag.Name</button>
+    }
+
+    <button @onclick="GoToPage<SettingsAnsicht>">Go to Settings</button>
+</SectionContent>
+
+@code {
+    private List<Auftrag> auftraege = new List<Auftrag>();
+
+    [StepParameter]
+    public Auftrag SelectedAuftrag { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        auftraege.Add(new Auftrag()
+            {
+                Name = "Test Auftrag",
+                Description = "Ein Test Auftrag"
+            });
+
+        auftraege.Add(new Auftrag()
+            {
+                Name = "Ein anderer Auftrag",
+                Description = "Irgend ein anderer Auftrag"
+            });
+    }
+
+    private void selectAuftrag(Auftrag selectedAuftrag)
+    {
+        this.SelectedAuftrag = selectedAuftrag;
+        GoToPage<AuftragAnsicht>();
+    }
+
+}

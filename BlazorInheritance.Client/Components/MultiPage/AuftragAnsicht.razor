@@ -1,0 +1,15 @@
+﻿@using BlazorInheritance.Client.Components.Wizard
+@inherits AgrisBasePage
+@((RenderFragment)base.BuildRenderTree)
+
+<SectionContent SectionId="this.Content">
+    <h3>@this.SelectedAuftrag.Name</h3> 
+    <br/>
+    @this.SelectedAuftrag.Description
+
+</SectionContent>
+
+@code {
+    [StepParameter]
+    public Auftrag SelectedAuftrag { get; set; }
+}

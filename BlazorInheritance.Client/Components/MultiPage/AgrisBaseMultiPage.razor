@@ -1,0 +1,93 @@
+﻿@using BlazorInheritance.Client.Components.Wizard
+
+@if (CurrentPage != null)
+{
+    <SectionOutlet SectionId="CurrentPage.Content" />
+
+    @if (CurrentPage != HomePage)
+    {
+        <br />
+        <br />
+        <button @onclick="goToPreviousPage">Back</button>
+        if (history.Count > 1)
+        {
+            <button @onclick="goToHomePage">Home</button>
+        }
+    }
+}
+
+@code {
+    public static AgrisBaseMultiPage MultiPage { get; set; }
+
+    protected AgrisBasePage CurrentPage { get; set; }
+    protected AgrisBasePage HomePage { get; set; }
+
+    private List<AgrisBasePage> pages = new List<AgrisBasePage>();
+    private Stack<AgrisBasePage> history = new Stack<AgrisBasePage>();
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        pages.Clear();
+        MultiPage = this;
+        history.Clear();
+    }
+
+    public void RegisterPage(AgrisBasePage page)
+    {
+        if (!pages.Contains(page))
+        {
+            pages.Add(page);
+
+            if (pages.Count == 1)
+            {
+                CurrentPage = page;
+                HomePage = page;
+                StateHasChanged();
+            }
+        }
+    }
+
+    public void GoToPage(Type pageType)
+    {
+        if(pages.Count == 0)
+        {
+            return;
+        }
+
+        AgrisBasePage? nextPage = pages.FirstOrDefault(p => p.GetType() == pageType);
+
+        if (nextPage != null)
+        {
+
+            history.Push(CurrentPage);
+
+            StepParameter.PassParameters(CurrentPage, nextPage);
+            CurrentPage = nextPage;
+
+
+
+            StateHasChanged();
+        }
+    }
+
+    private void goToPreviousPage()
+    {
+        if (history.Count == 0)
+        {
+            return;
+        }
+
+
+        AgrisBasePage previousPage = history.Pop();
+        CurrentPage = previousPage;
+        StateHasChanged();
+    }
+
+    private void goToHomePage()
+    {
+        history.Clear();
+        CurrentPage = HomePage;
+        StateHasChanged();
+    }
+}
