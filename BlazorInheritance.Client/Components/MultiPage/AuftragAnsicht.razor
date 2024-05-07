@@ -1,15 +1,39 @@
-﻿@using BlazorInheritance.Client.Components.Wizard
+﻿@using BlazorInheritance.Client.Components.MultiPage.Wizard_Pages
+@using BlazorInheritance.Client.Components.Wizard
 @inherits AgrisBasePage
 @((RenderFragment)base.BuildRenderTree)
 
 <SectionContent SectionId="this.Content">
-    <h3>@this.SelectedAuftrag.Name</h3> 
+    <Header>@this.SelectedAuftrag.Name</Header> 
     <br/>
-    @this.SelectedAuftrag.Description
+    @this.SelectedAuftrag.Description <br/>
+     
+    Check this do be able to advance <input type="checkbox" @bind="checkedSomething"/> <br/>
 
+    <button @onclick="GoToPage<AuftragStep1>">Go to next step</button>
+    
 </SectionContent>
+
+<AuftragStep1 />
+
+
 
 @code {
     [StepParameter]
     public Auftrag SelectedAuftrag { get; set; }
+
+    private bool checkedSomething = false;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        this.Name = "Auftrag Wizard";
+        // this.FutureSteps.Add("Produktionslinie");
+        // this.FutureSteps.Add("Abschluss");
+    }
+
+    protected override bool CanSwitchTo<AuftragStep1>()
+    {
+        return checkedSomething;
+    }
 }

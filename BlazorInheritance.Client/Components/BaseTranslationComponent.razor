@@ -1,0 +1,35 @@
+﻿@using Microsoft.AspNetCore.Components.Rendering
+@using BlazorInheritance.Client.Resources
+@using Microsoft.AspNetCore.Components
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<Sprachtexte> sprachTexte
+
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    public string RawContent { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        var builder = new RenderTreeBuilder();
+
+        ChildContent(builder);
+
+        var frames = builder.GetFrames();
+        var frame = frames.Array.First();
+        
+        
+        string text = frame.MarkupContent;
+
+        if (!string.IsNullOrEmpty(text) && string.IsNullOrEmpty(RawContent) )
+        {
+            RawContent = sprachTexte[text];
+        }
+
+        //RawContent = ChildContent.Target.GetType().Namespace;
+
+    }
+}

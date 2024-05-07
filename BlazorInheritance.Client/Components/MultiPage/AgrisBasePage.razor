@@ -1,11 +1,28 @@
 ﻿
 
 @code {
+    [CascadingParameter(Name = "Test")]
+    protected AgrisBasePage ParentPage { get; set; } 
+
     public object Content = new object();
+    public string Name { get; set; } = "";
+
+    public List<string> FutureSteps = new List<string>();
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        if (ParentPage != null)
+        {
+            this.ParentPage.registerChild(this);
+        }
+    }
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
+
+        
 
         if (AgrisBaseMultiPage.MultiPage != null)
         {
@@ -13,13 +30,21 @@
         }
     }
 
-    // protected void GoToPage(Type pageType)
-    // {
-    //     AgrisBaseMultiPage.MultiPage.GoToPage(pageType);    
-    // }
-
     protected void GoToPage<T>()
     {
-        AgrisBaseMultiPage.MultiPage.GoToPage(typeof(T));
+        if (CanSwitchTo<T>())
+        {
+            AgrisBaseMultiPage.MultiPage.GoToPage(typeof(T));
+        }
+    }
+
+    protected virtual bool CanSwitchTo<T>()
+    {
+        return true;   
+    }
+
+    private void registerChild(AgrisBasePage childPage)
+    {
+        this.FutureSteps.Add(childPage.Name);
     }
 }

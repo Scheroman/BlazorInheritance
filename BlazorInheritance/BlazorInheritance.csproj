@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\BlazorInheritance.Client\BlazorInheritance.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.3" />
   </ItemGroup>
 
 </Project>

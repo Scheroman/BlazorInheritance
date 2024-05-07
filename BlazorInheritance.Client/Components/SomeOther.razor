@@ -1,0 +1,24 @@
+﻿@using System.Reflection
+<h3>SomeOther</h3>
+
+@code {
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        FieldInfo fi = typeof(ComponentBase).GetField("_hasNeverRendered", BindingFlags.NonPublic | BindingFlags.Instance);
+        bool _hasNeverRendered = (bool)fi.GetValue(this);
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        FieldInfo fi = typeof(ComponentBase).GetField("_hasNeverRendered", BindingFlags.NonPublic | BindingFlags.Instance);
+        bool _hasNeverRendered = (bool)fi.GetValue(this);
+        //typeof(ComponentBase).GetMethod("something") = test;
+    }
+
+    private void test()
+    {
+        
+    }
+}

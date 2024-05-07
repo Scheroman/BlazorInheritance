@@ -2,19 +2,69 @@
 
 @if (CurrentPage != null)
 {
-    <SectionOutlet SectionId="CurrentPage.Content" />
-
-    @if (CurrentPage != HomePage)
-    {
-        <br />
-        <br />
-        <button @onclick="goToPreviousPage">Back</button>
-        if (history.Count > 1)
-        {
-            <button @onclick="goToHomePage">Home</button>
-        }
-    }
+    <div class="card">
+        <div class="card-header">
+            <button class="toolbar-button" @onclick="goToPreviousPage" disabled="@this.isHomePage"><i class="fa fa-arrow-circle-o-left icon"></i></button>
+            <button class="toolbar-button" @onclick="goToHomePage" disabled="@this.isHomePage"><i class="fa fa-home icon"></i></button>
+            <HistoryBar History="history" FutureSteps="CurrentPage.FutureSteps" OnPageSelected="onPageSelected"></HistoryBar>
+        </div>
+        <div class="card-body">
+            <CascadingValue Value="CurrentPage" Name="Test">
+                <SectionOutlet SectionId="CurrentPage.Content" />
+            </CascadingValue>
+        </div>
+    </div>
 }
+
+<style>
+    .card {
+        height: 100%;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        display: flex; /* Use flexbox for layout */
+        flex-direction: column; /* Stack child elements vertically */
+    }
+
+    .card-header {
+        background-color: #f5f5f5;
+        padding: 10px;
+        border-bottom: 1px solid #ccc;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        display: flex; /* Use flexbox for layout */
+        justify-content: center;
+        align-items: center; /* Center content vertically */
+    }
+
+    .card-body {
+        padding: 15px;
+        flex-grow: 1;
+    }
+
+    .card-header h3 {
+        margin: 0; /* Reset margin */
+        padding: 0; /* Reset padding */
+    }
+
+    .toolbar-button {
+        margin-right: 5px;
+        border: none;
+        background-color: transparent;
+        align-items: center;
+        font-size: 15pt;
+        transition: 0.3s;
+        color: rgba(0,0,0,0.75);
+    }
+
+        .toolbar-button:hover {
+            color: cornflowerblue;
+        }
+
+        .toolbar-button:disabled {
+            color: rgba(0,0,0,0.5);
+        }
+</style>
 
 @code {
     public static AgrisBaseMultiPage MultiPage { get; set; }
@@ -24,6 +74,8 @@
 
     private List<AgrisBasePage> pages = new List<AgrisBasePage>();
     private Stack<AgrisBasePage> history = new Stack<AgrisBasePage>();
+    private bool isHomePage => history.Count() <= 1;
+    private SectionOutlet outlet;
 
     protected override void OnInitialized()
     {
@@ -31,6 +83,8 @@
         pages.Clear();
         MultiPage = this;
         history.Clear();
+
+        
     }
 
     public void RegisterPage(AgrisBasePage page)
@@ -43,6 +97,7 @@
             {
                 CurrentPage = page;
                 HomePage = page;
+                history.Push(CurrentPage);
                 StateHasChanged();
             }
         }
@@ -50,7 +105,7 @@
 
     public void GoToPage(Type pageType)
     {
-        if(pages.Count == 0)
+        if (pages.Count == 0)
         {
             return;
         }
@@ -59,28 +114,22 @@
 
         if (nextPage != null)
         {
-
-            history.Push(CurrentPage);
-
             StepParameter.PassParameters(CurrentPage, nextPage);
             CurrentPage = nextPage;
-
-
-
+            history.Push(CurrentPage);
             StateHasChanged();
         }
     }
 
     private void goToPreviousPage()
     {
-        if (history.Count == 0)
+        if (history.Count == 1)
         {
             return;
         }
 
-
         AgrisBasePage previousPage = history.Pop();
-        CurrentPage = previousPage;
+        CurrentPage = history.Peek();
         StateHasChanged();
     }
 
@@ -88,6 +137,23 @@
     {
         history.Clear();
         CurrentPage = HomePage;
+        history.Push(CurrentPage);
+        StateHasChanged();
+    }
+
+    private void onPageSelected(AgrisBasePage page)
+    {
+        if (page == CurrentPage || !history.Contains(page))
+        {
+            return;
+        }
+
+        while (history.Peek() != page)
+        {
+            history.Pop();
+        }
+
+        CurrentPage = history.Peek();
         StateHasChanged();
     }
 }
